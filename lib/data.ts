@@ -58,64 +58,182 @@ export const countryData = {
     deathRate: 7.3,
     fertilityRate: 2.0
   },
-  china: {
-    name: 'China',
-    color: '#DE2910',
+  usa: {
+    name: 'USA',
+    color: '#3B82F6',
     population: {
-      2018: 1411750872,
-      2019: 1417778528,
-      2020: 1424215993,
-      2021: 1425887337,
-      2022: 1426178947,
-      2023: 1425671352,
-      2024: 1425060000
+      2018: 326687914,
+      2019: 328239523,
+      2020: 329484123,
+      2021: 331893745,
+      2022: 333287557,
+      2023: 334998398,
+      2024: 336791654
     },
     gdp: {
-      2018: 13995.9,
-      2019: 14365.9,
-      2020: 14701.6,
-      2021: 17734.1,
-      2022: 17963.2,
-      2023: 17945,
-      2024: 18530
+      2018: 20580.2,
+      2019: 21371.9,
+      2020: 20893.7,
+      2021: 23315.1,
+      2022: 25462.7,
+      2023: 27360.9,
+      2024: 28781.1
     },
     gdpPerCapita: {
-      2018: 9919,
-      2019: 10143,
-      2020: 10320,
-      2021: 12446,
-      2022: 12588,
-      2023: 12582,
-      2024: 13008
+      2018: 62979,
+      2019: 65111,
+      2020: 63413,
+      2021: 70219,
+      2022: 76398,
+      2023: 81632,
+      2024: 85473
     },
     growthRate: {
-      2018: 6.67,
-      2019: 6.0,
-      2020: 2.24,
-      2021: 8.4,
-      2022: 3.0,
-      2023: 5.2,
-      2024: 4.6
+      2018: 2.9,
+      2019: 2.3,
+      2020: -2.8,
+      2021: 5.9,
+      2022: 2.1,
+      2023: 2.5,
+      2024: 2.7
     },
-    literacy: 96.8,
-    lifeExpectancy: 78.2,
-    unemployment: 5.1,
-    inflation: 0.2,
-    internetPenetration: 73,
-    smartphoneUsers: 1030,
-    exports: 3630,
-    imports: 2730,
-    defenseBudget: 292,
-    renewableEnergy: 1169,
-    electricVehicles: 14.1,
-    manufacturingIndex: 85,
-    healthcareExpenditure: 3.0,
-    educationExpenditure: 3.6,
-    urbanPopulation: 64,
-    medianAge: 38.4,
-    birthRate: 7.5,
-    deathRate: 7.7,
-    fertilityRate: 1.2
+    literacy: 86,
+    lifeExpectancy: 77.3,
+    unemployment: 3.7,
+    inflation: 3.4,
+    internetPenetration: 92,
+    smartphoneUsers: 295,
+    exports: 2051,
+    imports: 3200,
+    defenseBudget: 886,
+    renewableEnergy: 384,
+    electricVehicles: 4.5,
+    manufacturingIndex: 56,
+    healthcareExpenditure: 16.8,
+    educationExpenditure: 5.4,
+    urbanPopulation: 83,
+    medianAge: 38.9,
+    birthRate: 11.4,
+    deathRate: 8.8,
+    fertilityRate: 1.7
+  },
+  russia: {
+    name: 'Russia',
+    color: '#EF4444',
+    population: {
+      2018: 144474560,
+      2019: 144406262,
+      2020: 144104080,
+      2021: 143449286,
+      2022: 143437846,
+      2023: 143557878,
+      2024: 143785366
+    },
+    gdp: {
+      2018: 1657.6,
+      2019: 1695.9,
+      2020: 1483.5,
+      2021: 1775.8,
+      2022: 2215.9,
+      2023: 1915.6,
+      2024: 1990.3
+    },
+    gdpPerCapita: {
+      2018: 11479,
+      2019: 11744,
+      2020: 10299,
+      2021: 12382,
+      2022: 15449,
+      2023: 13345,
+      2024: 13845
+    },
+    growthRate: {
+      2018: 2.5,
+      2019: 2.0,
+      2020: -2.7,
+      2021: 5.6,
+      2022: -2.1,
+      2023: 3.6,
+      2024: 3.8
+    },
+    literacy: 99.7,
+    lifeExpectancy: 72.9,
+    unemployment: 2.8,
+    inflation: 7.4,
+    internetPenetration: 85,
+    smartphoneUsers: 109,
+    exports: 435,
+    imports: 285,
+    defenseBudget: 109,
+    renewableEnergy: 58,
+    electricVehicles: 0.15,
+    manufacturingIndex: 38,
+    healthcareExpenditure: 5.6,
+    educationExpenditure: 4.4,
+    urbanPopulation: 75,
+    medianAge: 40.3,
+    birthRate: 9.8,
+    deathRate: 12.7,
+    fertilityRate: 1.5
+  },
+  europe: {
+    name: 'Europe',
+    color: '#F59E0B',
+    population: {
+      2018: 513479535,
+      2019: 514950318,
+      2020: 516254324,
+      2021: 516637704,
+      2022: 516644425,
+      2023: 516560248,
+      2024: 516428569
+    },
+    gdp: {
+      2018: 16923.3,
+      2019: 17295.6,
+      2020: 16362.5,
+      2021: 17621.8,
+      2022: 17794.3,
+      2023: 18231.7,
+      2024: 18845.9
+    },
+    gdpPerCapita: {
+      2018: 32975,
+      2019: 33595,
+      2020: 31692,
+      2021: 34119,
+      2022: 34451,
+      2023: 35307,
+      2024: 36500
+    },
+    growthRate: {
+      2018: 2.1,
+      2019: 1.9,
+      2020: -5.9,
+      2021: 5.4,
+      2022: 3.4,
+      2023: 0.5,
+      2024: 1.2
+    },
+    literacy: 98.5,
+    lifeExpectancy: 81.2,
+    unemployment: 6.2,
+    inflation: 5.7,
+    internetPenetration: 89,
+    smartphoneUsers: 435,
+    exports: 7650,
+    imports: 7280,
+    defenseBudget: 285,
+    renewableEnergy: 508,
+    electricVehicles: 6.8,
+    manufacturingIndex: 61,
+    healthcareExpenditure: 9.8,
+    educationExpenditure: 4.5,
+    urbanPopulation: 74,
+    medianAge: 42.5,
+    birthRate: 9.1,
+    deathRate: 10.4,
+    fertilityRate: 1.5
   }
 };
 
@@ -124,45 +242,53 @@ export const years = [2018, 2019, 2020, 2021, 2022, 2023, 2024];
 export const populationData = years.map(year => ({
   year,
   India: countryData.india.population[year as keyof typeof countryData.india.population],
-  China: countryData.china.population[year as keyof typeof countryData.china.population]
+  USA: countryData.usa.population[year as keyof typeof countryData.usa.population],
+  Russia: countryData.russia.population[year as keyof typeof countryData.russia.population],
+  Europe: countryData.europe.population[year as keyof typeof countryData.europe.population]
 }));
 
 export const gdpData = years.map(year => ({
   year,
   India: countryData.india.gdp[year as keyof typeof countryData.india.gdp],
-  China: countryData.china.gdp[year as keyof typeof countryData.china.gdp]
+  USA: countryData.usa.gdp[year as keyof typeof countryData.usa.gdp],
+  Russia: countryData.russia.gdp[year as keyof typeof countryData.russia.gdp],
+  Europe: countryData.europe.gdp[year as keyof typeof countryData.europe.gdp]
 }));
 
 export const gdpPerCapitaData = years.map(year => ({
   year,
   India: countryData.india.gdpPerCapita[year as keyof typeof countryData.india.gdpPerCapita],
-  China: countryData.china.gdpPerCapita[year as keyof typeof countryData.china.gdpPerCapita]
+  USA: countryData.usa.gdpPerCapita[year as keyof typeof countryData.usa.gdpPerCapita],
+  Russia: countryData.russia.gdpPerCapita[year as keyof typeof countryData.russia.gdpPerCapita],
+  Europe: countryData.europe.gdpPerCapita[year as keyof typeof countryData.europe.gdpPerCapita]
 }));
 
 export const growthRateData = years.map(year => ({
   year,
   India: countryData.india.growthRate[year as keyof typeof countryData.india.growthRate],
-  China: countryData.china.growthRate[year as keyof typeof countryData.china.growthRate]
+  USA: countryData.usa.growthRate[year as keyof typeof countryData.usa.growthRate],
+  Russia: countryData.russia.growthRate[year as keyof typeof countryData.russia.growthRate],
+  Europe: countryData.europe.growthRate[year as keyof typeof countryData.europe.growthRate]
 }));
 
 export const comparisonMetrics = [
-  { metric: 'Literacy Rate', India: countryData.india.literacy, China: countryData.china.literacy, unit: '%' },
-  { metric: 'Life Expectancy', India: countryData.india.lifeExpectancy, China: countryData.china.lifeExpectancy, unit: 'years' },
-  { metric: 'Unemployment Rate', India: countryData.india.unemployment, China: countryData.china.unemployment, unit: '%' },
-  { metric: 'Inflation Rate', India: countryData.india.inflation, China: countryData.china.inflation, unit: '%' },
-  { metric: 'Internet Penetration', India: countryData.india.internetPenetration, China: countryData.china.internetPenetration, unit: '%' },
-  { metric: 'Smartphone Users', India: countryData.india.smartphoneUsers, China: countryData.china.smartphoneUsers, unit: 'million' },
-  { metric: 'Exports', India: countryData.india.exports, China: countryData.china.exports, unit: 'billion USD' },
-  { metric: 'Imports', India: countryData.india.imports, China: countryData.china.imports, unit: 'billion USD' },
-  { metric: 'Defense Budget', India: countryData.india.defenseBudget, China: countryData.china.defenseBudget, unit: 'billion USD' },
-  { metric: 'Renewable Energy', India: countryData.india.renewableEnergy, China: countryData.china.renewableEnergy, unit: 'GW' },
-  { metric: 'Electric Vehicles', India: countryData.india.electricVehicles, China: countryData.china.electricVehicles, unit: 'million' },
-  { metric: 'Manufacturing Index', India: countryData.india.manufacturingIndex, China: countryData.china.manufacturingIndex, unit: 'index' },
-  { metric: 'Healthcare Expenditure', India: countryData.india.healthcareExpenditure, China: countryData.china.healthcareExpenditure, unit: '% of GDP' },
-  { metric: 'Education Expenditure', India: countryData.india.educationExpenditure, China: countryData.china.educationExpenditure, unit: '% of GDP' },
-  { metric: 'Urban Population', India: countryData.india.urbanPopulation, China: countryData.china.urbanPopulation, unit: '%' },
-  { metric: 'Median Age', India: countryData.india.medianAge, China: countryData.china.medianAge, unit: 'years' },
-  { metric: 'Birth Rate', India: countryData.india.birthRate, China: countryData.china.birthRate, unit: 'per 1000' },
-  { metric: 'Death Rate', India: countryData.india.deathRate, China: countryData.china.deathRate, unit: 'per 1000' },
-  { metric: 'Fertility Rate', India: countryData.india.fertilityRate, China: countryData.china.fertilityRate, unit: 'children per woman' }
+  { metric: 'Literacy Rate', India: countryData.india.literacy, USA: countryData.usa.literacy, Russia: countryData.russia.literacy, Europe: countryData.europe.literacy, unit: '%' },
+  { metric: 'Life Expectancy', India: countryData.india.lifeExpectancy, USA: countryData.usa.lifeExpectancy, Russia: countryData.russia.lifeExpectancy, Europe: countryData.europe.lifeExpectancy, unit: 'years' },
+  { metric: 'Unemployment Rate', India: countryData.india.unemployment, USA: countryData.usa.unemployment, Russia: countryData.russia.unemployment, Europe: countryData.europe.unemployment, unit: '%' },
+  { metric: 'Inflation Rate', India: countryData.india.inflation, USA: countryData.usa.inflation, Russia: countryData.russia.inflation, Europe: countryData.europe.inflation, unit: '%' },
+  { metric: 'Internet Penetration', India: countryData.india.internetPenetration, USA: countryData.usa.internetPenetration, Russia: countryData.russia.internetPenetration, Europe: countryData.europe.internetPenetration, unit: '%' },
+  { metric: 'Smartphone Users', India: countryData.india.smartphoneUsers, USA: countryData.usa.smartphoneUsers, Russia: countryData.russia.smartphoneUsers, Europe: countryData.europe.smartphoneUsers, unit: 'million' },
+  { metric: 'Exports', India: countryData.india.exports, USA: countryData.usa.exports, Russia: countryData.russia.exports, Europe: countryData.europe.exports, unit: 'billion USD' },
+  { metric: 'Imports', India: countryData.india.imports, USA: countryData.usa.imports, Russia: countryData.russia.imports, Europe: countryData.europe.imports, unit: 'billion USD' },
+  { metric: 'Defense Budget', India: countryData.india.defenseBudget, USA: countryData.usa.defenseBudget, Russia: countryData.russia.defenseBudget, Europe: countryData.europe.defenseBudget, unit: 'billion USD' },
+  { metric: 'Renewable Energy', India: countryData.india.renewableEnergy, USA: countryData.usa.renewableEnergy, Russia: countryData.russia.renewableEnergy, Europe: countryData.europe.renewableEnergy, unit: 'GW' },
+  { metric: 'Electric Vehicles', India: countryData.india.electricVehicles, USA: countryData.usa.electricVehicles, Russia: countryData.russia.electricVehicles, Europe: countryData.europe.electricVehicles, unit: 'million' },
+  { metric: 'Manufacturing Index', India: countryData.india.manufacturingIndex, USA: countryData.usa.manufacturingIndex, Russia: countryData.russia.manufacturingIndex, Europe: countryData.europe.manufacturingIndex, unit: 'index' },
+  { metric: 'Healthcare Expenditure', India: countryData.india.healthcareExpenditure, USA: countryData.usa.healthcareExpenditure, Russia: countryData.russia.healthcareExpenditure, Europe: countryData.europe.healthcareExpenditure, unit: '% of GDP' },
+  { metric: 'Education Expenditure', India: countryData.india.educationExpenditure, USA: countryData.usa.educationExpenditure, Russia: countryData.russia.educationExpenditure, Europe: countryData.europe.educationExpenditure, unit: '% of GDP' },
+  { metric: 'Urban Population', India: countryData.india.urbanPopulation, USA: countryData.usa.urbanPopulation, Russia: countryData.russia.urbanPopulation, Europe: countryData.europe.urbanPopulation, unit: '%' },
+  { metric: 'Median Age', India: countryData.india.medianAge, USA: countryData.usa.medianAge, Russia: countryData.russia.medianAge, Europe: countryData.europe.medianAge, unit: 'years' },
+  { metric: 'Birth Rate', India: countryData.india.birthRate, USA: countryData.usa.birthRate, Russia: countryData.russia.birthRate, Europe: countryData.europe.birthRate, unit: 'per 1000' },
+  { metric: 'Death Rate', India: countryData.india.deathRate, USA: countryData.usa.deathRate, Russia: countryData.russia.deathRate, Europe: countryData.europe.deathRate, unit: 'per 1000' },
+  { metric: 'Fertility Rate', India: countryData.india.fertilityRate, USA: countryData.usa.fertilityRate, Russia: countryData.russia.fertilityRate, Europe: countryData.europe.fertilityRate, unit: 'children per woman' }
 ];
