@@ -1,7 +1,7 @@
 'use client';
 
-import { LineChart, Line, BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
-import { populationData, gdpData, gdpPerCapitaData, growthRateData, comparisonMetrics, countryData } from '../lib/data';
+import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import { populationData, gdpData, gdpPerCapitaData, growthRateData, countryData } from '../lib/data';
 
 const COLORS = {
   India: countryData.india.color,
@@ -24,8 +24,8 @@ export default function Home() {
               <LineChart data={populationData}>
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="year" />
-                <YAxis tickFormatter={(value) => `${(value / 1000000000).toFixed(1)}B`} />
-                <Tooltip formatter={(value) => new Intl.NumberFormat('en-US').format(Number(value))} />
+                <YAxis tickFormatter={(value) => `${(Number(value) / 1000000000).toFixed(1)}B`} />
+                <Tooltip formatter={(value) => value !== undefined ? new Intl.NumberFormat('en-US').format(Number(value)) : ''} />
                 <Legend />
                 <Line type="monotone" dataKey="India" stroke={COLORS.India} strokeWidth={3} dot={{ fill: COLORS.India }} />
                 <Line type="monotone" dataKey="China" stroke={COLORS.China} strokeWidth={3} dot={{ fill: COLORS.China }} />
@@ -39,8 +39,8 @@ export default function Home() {
               <LineChart data={gdpData}>
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="year" />
-                <YAxis tickFormatter={(value) => `$${value}T`} />
-                <Tooltip formatter={(value) => `$${value.toLocaleString()}B`} />
+                <YAxis tickFormatter={(value) => `$${Number(value)}T`} />
+                <Tooltip formatter={(value) => value !== undefined ? `$${value.toLocaleString()}B` : ''} />
                 <Legend />
                 <Line type="monotone" dataKey="India" stroke={COLORS.India} strokeWidth={3} dot={{ fill: COLORS.India }} />
                 <Line type="monotone" dataKey="China" stroke={COLORS.China} strokeWidth={3} dot={{ fill: COLORS.China }} />
@@ -54,8 +54,8 @@ export default function Home() {
               <BarChart data={gdpPerCapitaData}>
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="year" />
-                <YAxis tickFormatter={(value) => `$${value}`} />
-                <Tooltip formatter={(value) => `$${value.toLocaleString()}`} />
+                <YAxis tickFormatter={(value) => `$${Number(value)}`} />
+                <Tooltip formatter={(value) => value !== undefined ? `$${value.toLocaleString()}` : ''} />
                 <Legend />
                 <Bar dataKey="India" fill={COLORS.India} radius={[4, 4, 0, 0]} />
                 <Bar dataKey="China" fill={COLORS.China} radius={[4, 4, 0, 0]} />
@@ -69,8 +69,8 @@ export default function Home() {
               <LineChart data={growthRateData}>
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="year" />
-                <YAxis tickFormatter={(value) => `${value}%`} />
-                <Tooltip formatter={(value) => `${value}%`} />
+                <YAxis tickFormatter={(value) => `${Number(value)}%`} />
+                <Tooltip formatter={(value) => value !== undefined ? `${value}%` : ''} />
                 <Legend />
                 <Line type="monotone" dataKey="India" stroke={COLORS.India} strokeWidth={3} dot={{ fill: COLORS.India }} />
                 <Line type="monotone" dataKey="China" stroke={COLORS.China} strokeWidth={3} dot={{ fill: COLORS.China }} />
