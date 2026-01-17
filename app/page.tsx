@@ -1,18 +1,24 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { populationData, gdpData, gdpPerCapitaData, growthRateData, countryData, comparisonMetrics } from '../lib/data';
 
+// Minimal, pleasing color palette
 const COLORS = {
-  India: countryData.india.color,
-  USA: countryData.usa.color,
-  Russia: countryData.russia.color,
-  Europe: countryData.europe.color
+  India: '#10b981', // Emerald 500
+  USA: '#3b82f6',   // Blue 500
+  Russia: '#f43f5e', // Rose 500
+  Europe: '#f59e0b' // Amber 500
 };
 
 export default function Home() {
-  const [darkMode, setDarkMode] = useState(false);
+  const [darkMode, setDarkMode] = useState(true);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const getDifference = (country: 'USA' | 'Russia' | 'Europe', metric: string, indiaValue: number, countryValue: number, higherIsBetter: boolean = true) => {
     const diff = countryValue - indiaValue;
@@ -21,253 +27,196 @@ export default function Home() {
     return { diff, percentDiff, isAhead };
   };
 
+  if (!mounted) return null;
+
+  const bgColor = darkMode ? 'bg-neutral-950' : 'bg-neutral-50';
+  const textColor = darkMode ? 'text-neutral-200' : 'text-neutral-800';
+  const cardBg = darkMode ? 'bg-neutral-900/50' : 'bg-white';
+  const borderColor = darkMode ? 'border-neutral-800' : 'border-neutral-200';
+  const secondaryText = darkMode ? 'text-neutral-400' : 'text-neutral-500';
+
   return (
-    <div className={`min-h-screen ${darkMode ? 'bg-black' : 'bg-gray-50'} p-3 sm:p-4 md:p-8 transition-colors duration-200`}>
-      <div className="max-w-7xl mx-auto">
-        <header className="flex flex-col sm:flex-row justify-between items-center mb-6 sm:mb-12 gap-4">
-          <div className="text-center sm:text-left">
-            <h1 className={`text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold ${darkMode ? 'text-white' : 'text-gray-900'} mb-2`}>Global Comparison</h1>
-            <p className={`text-sm sm:text-base ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>India vs USA, Russia, Europe (2018-2024)</p>
+    <div className={`min-h-screen ${bgColor} ${textColor} transition-colors duration-500 font-sans selection:bg-emerald-500/30`}>
+      <div className="max-w-6xl mx-auto px-6 py-12 md:py-20">
+        
+        {/* Header Section */}
+        <header className="flex flex-col items-center justify-center mb-16 space-y-6 text-center">
+          <div className="space-y-2">
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-extralight tracking-tight">
+              Global Comparison
+            </h1>
+            <p className={`text-lg ${secondaryText} font-light tracking-wide`}>
+              India vs USA, Russia, Europe (2018-2024)
+            </p>
           </div>
+          
           <button
             onClick={() => setDarkMode(!darkMode)}
-            className={`px-4 py-2 rounded-lg font-medium transition-all duration-200 ${
-              darkMode 
-                ? 'bg-white text-black hover:bg-gray-200' 
-                : 'bg-black text-white hover:bg-gray-800'
-            }`}
+            className={`
+              px-6 py-2 rounded-full text-sm font-medium tracking-wide transition-all duration-300
+              ${darkMode 
+                ? 'bg-neutral-800 hover:bg-neutral-700 text-neutral-300' 
+                : 'bg-neutral-200 hover:bg-neutral-300 text-neutral-700'}
+            `}
           >
-            {darkMode ? '☀️ Light' : '🌙 Dark'}
+            {darkMode ? 'Light Mode' : 'Dark Mode'}
           </button>
         </header>
 
-        <div className="space-y-4 sm:space-y-6">
-          <div className={`rounded-xl shadow-lg p-4 sm:p-6 ${darkMode ? 'bg-zinc-900 border border-zinc-800' : 'bg-white'}`}>
-            <h2 className={`text-lg sm:text-xl font-semibold mb-4 ${darkMode ? 'text-white' : 'text-gray-800'}`}>Population Comparison</h2>
-            <ResponsiveContainer width="100%" height={280}>
+        {/* Charts Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-16">
+          <ChartCard title="Population (Billions)" darkMode={darkMode} cardBg={cardBg} borderColor={borderColor} secondaryText={secondaryText}>
+            <ResponsiveContainer width="100%" height={250}>
               <LineChart data={populationData}>
-                <CartesianGrid strokeDasharray="3 3" stroke={darkMode ? '#333' : '#e0e0e0'} />
-                <XAxis dataKey="year" stroke={darkMode ? '#888' : '#666'} />
-                <YAxis tickFormatter={(value) => `${(Number(value) / 1000000000).toFixed(1)}B`} stroke={darkMode ? '#888' : '#666'} />
-                <Tooltip 
-                  formatter={(value) => value !== undefined ? new Intl.NumberFormat('en-US').format(Number(value)) : ''}
-                  contentStyle={{ backgroundColor: darkMode ? '#1a1a1a' : '#fff', border: darkMode ? '1px solid #333' : '1px solid #ddd', borderRadius: '8px' }}
-                  labelStyle={{ color: darkMode ? '#fff' : '#333' }}
-                />
-                <Legend />
-                <Line type="monotone" dataKey="India" stroke={COLORS.India} strokeWidth={2} dot={{ fill: COLORS.India, r: 4 }} />
-                <Line type="monotone" dataKey="USA" stroke={COLORS.USA} strokeWidth={2} dot={{ fill: COLORS.USA, r: 4 }} />
-                <Line type="monotone" dataKey="Russia" stroke={COLORS.Russia} strokeWidth={2} dot={{ fill: COLORS.Russia, r: 4 }} />
-                <Line type="monotone" dataKey="Europe" stroke={COLORS.Europe} strokeWidth={2} dot={{ fill: COLORS.Europe, r: 4 }} />
+                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke={darkMode ? '#333' : '#eee'} />
+                <XAxis dataKey="year" tickLine={false} axisLine={false} tick={{ fill: darkMode ? '#737373' : '#a3a3a3', fontSize: 12 }} dy={10} />
+                <YAxis tickFormatter={(value) => `${(Number(value) / 1000000000).toFixed(1)}`} tickLine={false} axisLine={false} tick={{ fill: darkMode ? '#737373' : '#a3a3a3', fontSize: 12 }} />
+                <Tooltip content={<CustomTooltip darkMode={darkMode} />} />
+                <Line type="monotone" dataKey="India" stroke={COLORS.India} strokeWidth={2} dot={false} activeDot={{ r: 6 }} />
+                <Line type="monotone" dataKey="USA" stroke={COLORS.USA} strokeWidth={2} dot={false} />
+                <Line type="monotone" dataKey="Russia" stroke={COLORS.Russia} strokeWidth={2} dot={false} />
+                <Line type="monotone" dataKey="Europe" stroke={COLORS.Europe} strokeWidth={2} dot={false} />
               </LineChart>
             </ResponsiveContainer>
-          </div>
+          </ChartCard>
 
-          <div className={`rounded-xl shadow-lg p-4 sm:p-6 ${darkMode ? 'bg-zinc-900 border border-zinc-800' : 'bg-white'}`}>
-            <h2 className={`text-lg sm:text-xl font-semibold mb-4 ${darkMode ? 'text-white' : 'text-gray-800'}`}>GDP Comparison</h2>
-            <ResponsiveContainer width="100%" height={280}>
+          <ChartCard title="GDP (Trillions USD)" darkMode={darkMode} cardBg={cardBg} borderColor={borderColor} secondaryText={secondaryText}>
+            <ResponsiveContainer width="100%" height={250}>
               <LineChart data={gdpData}>
-                <CartesianGrid strokeDasharray="3 3" stroke={darkMode ? '#333' : '#e0e0e0'} />
-                <XAxis dataKey="year" stroke={darkMode ? '#888' : '#666'} />
-                <YAxis tickFormatter={(value) => `$${Number(value)}T`} stroke={darkMode ? '#888' : '#666'} />
-                <Tooltip 
-                  formatter={(value) => value !== undefined ? `$${value.toLocaleString()}B` : ''}
-                  contentStyle={{ backgroundColor: darkMode ? '#1a1a1a' : '#fff', border: darkMode ? '1px solid #333' : '1px solid #ddd', borderRadius: '8px' }}
-                  labelStyle={{ color: darkMode ? '#fff' : '#333' }}
-                />
-                <Legend />
-                <Line type="monotone" dataKey="India" stroke={COLORS.India} strokeWidth={2} dot={{ fill: COLORS.India, r: 4 }} />
-                <Line type="monotone" dataKey="USA" stroke={COLORS.USA} strokeWidth={2} dot={{ fill: COLORS.USA, r: 4 }} />
-                <Line type="monotone" dataKey="Russia" stroke={COLORS.Russia} strokeWidth={2} dot={{ fill: COLORS.Russia, r: 4 }} />
-                <Line type="monotone" dataKey="Europe" stroke={COLORS.Europe} strokeWidth={2} dot={{ fill: COLORS.Europe, r: 4 }} />
+                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke={darkMode ? '#333' : '#eee'} />
+                <XAxis dataKey="year" tickLine={false} axisLine={false} tick={{ fill: darkMode ? '#737373' : '#a3a3a3', fontSize: 12 }} dy={10} />
+                <YAxis tickFormatter={(value) => `${Number(value)}`} tickLine={false} axisLine={false} tick={{ fill: darkMode ? '#737373' : '#a3a3a3', fontSize: 12 }} />
+                <Tooltip content={<CustomTooltip darkMode={darkMode} />} />
+                <Line type="monotone" dataKey="India" stroke={COLORS.India} strokeWidth={2} dot={false} activeDot={{ r: 6 }} />
+                <Line type="monotone" dataKey="USA" stroke={COLORS.USA} strokeWidth={2} dot={false} />
+                <Line type="monotone" dataKey="Russia" stroke={COLORS.Russia} strokeWidth={2} dot={false} />
+                <Line type="monotone" dataKey="Europe" stroke={COLORS.Europe} strokeWidth={2} dot={false} />
               </LineChart>
             </ResponsiveContainer>
-          </div>
+          </ChartCard>
 
-          <div className={`rounded-xl shadow-lg p-4 sm:p-6 ${darkMode ? 'bg-zinc-900 border border-zinc-800' : 'bg-white'}`}>
-            <h2 className={`text-lg sm:text-xl font-semibold mb-4 ${darkMode ? 'text-white' : 'text-gray-800'}`}>GDP Per Capita</h2>
-            <ResponsiveContainer width="100%" height={280}>
+          <ChartCard title="GDP Per Capita (USD)" darkMode={darkMode} cardBg={cardBg} borderColor={borderColor} secondaryText={secondaryText}>
+             <ResponsiveContainer width="100%" height={250}>
               <BarChart data={gdpPerCapitaData}>
-                <CartesianGrid strokeDasharray="3 3" stroke={darkMode ? '#333' : '#e0e0e0'} />
-                <XAxis dataKey="year" stroke={darkMode ? '#888' : '#666'} />
-                <YAxis tickFormatter={(value) => `$${Number(value)}`} stroke={darkMode ? '#888' : '#666'} />
-                <Tooltip 
-                  formatter={(value) => value !== undefined ? `$${value.toLocaleString()}` : ''}
-                  contentStyle={{ backgroundColor: darkMode ? '#1a1a1a' : '#fff', border: darkMode ? '1px solid #333' : '1px solid #ddd', borderRadius: '8px' }}
-                  labelStyle={{ color: darkMode ? '#fff' : '#333' }}
-                />
-                <Legend />
+                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke={darkMode ? '#333' : '#eee'} />
+                <XAxis dataKey="year" tickLine={false} axisLine={false} tick={{ fill: darkMode ? '#737373' : '#a3a3a3', fontSize: 12 }} dy={10} />
+                <YAxis tickFormatter={(value) => `${(Number(value) / 1000).toFixed(0)}k`} tickLine={false} axisLine={false} tick={{ fill: darkMode ? '#737373' : '#a3a3a3', fontSize: 12 }} />
+                <Tooltip content={<CustomTooltip darkMode={darkMode} />} />
                 <Bar dataKey="India" fill={COLORS.India} radius={[4, 4, 0, 0]} />
                 <Bar dataKey="USA" fill={COLORS.USA} radius={[4, 4, 0, 0]} />
                 <Bar dataKey="Russia" fill={COLORS.Russia} radius={[4, 4, 0, 0]} />
                 <Bar dataKey="Europe" fill={COLORS.Europe} radius={[4, 4, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
-          </div>
+          </ChartCard>
 
-          <div className={`rounded-xl shadow-lg p-4 sm:p-6 ${darkMode ? 'bg-zinc-900 border border-zinc-800' : 'bg-white'}`}>
-            <h2 className={`text-lg sm:text-xl font-semibold mb-4 ${darkMode ? 'text-white' : 'text-gray-800'}`}>GDP Growth Rate</h2>
-            <ResponsiveContainer width="100%" height={280}>
+          <ChartCard title="Growth Rate (%)" darkMode={darkMode} cardBg={cardBg} borderColor={borderColor} secondaryText={secondaryText}>
+            <ResponsiveContainer width="100%" height={250}>
               <LineChart data={growthRateData}>
-                <CartesianGrid strokeDasharray="3 3" stroke={darkMode ? '#333' : '#e0e0e0'} />
-                <XAxis dataKey="year" stroke={darkMode ? '#888' : '#666'} />
-                <YAxis tickFormatter={(value) => `${Number(value)}%`} stroke={darkMode ? '#888' : '#666'} />
-                <Tooltip 
-                  formatter={(value) => value !== undefined ? `${value}%` : ''}
-                  contentStyle={{ backgroundColor: darkMode ? '#1a1a1a' : '#fff', border: darkMode ? '1px solid #333' : '1px solid #ddd', borderRadius: '8px' }}
-                  labelStyle={{ color: darkMode ? '#fff' : '#333' }}
-                />
-                <Legend />
-                <Line type="monotone" dataKey="India" stroke={COLORS.India} strokeWidth={2} dot={{ fill: COLORS.India, r: 4 }} />
-                <Line type="monotone" dataKey="USA" stroke={COLORS.USA} strokeWidth={2} dot={{ fill: COLORS.USA, r: 4 }} />
-                <Line type="monotone" dataKey="Russia" stroke={COLORS.Russia} strokeWidth={2} dot={{ fill: COLORS.Russia, r: 4 }} />
-                <Line type="monotone" dataKey="Europe" stroke={COLORS.Europe} strokeWidth={2} dot={{ fill: COLORS.Europe, r: 4 }} />
+                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke={darkMode ? '#333' : '#eee'} />
+                <XAxis dataKey="year" tickLine={false} axisLine={false} tick={{ fill: darkMode ? '#737373' : '#a3a3a3', fontSize: 12 }} dy={10} />
+                <YAxis tickFormatter={(value) => `${Number(value)}`} tickLine={false} axisLine={false} tick={{ fill: darkMode ? '#737373' : '#a3a3a3', fontSize: 12 }} />
+                <Tooltip content={<CustomTooltip darkMode={darkMode} />} />
+                <Line type="monotone" dataKey="India" stroke={COLORS.India} strokeWidth={2} dot={false} activeDot={{ r: 6 }} />
+                <Line type="monotone" dataKey="USA" stroke={COLORS.USA} strokeWidth={2} dot={false} />
+                <Line type="monotone" dataKey="Russia" stroke={COLORS.Russia} strokeWidth={2} dot={false} />
+                <Line type="monotone" dataKey="Europe" stroke={COLORS.Europe} strokeWidth={2} dot={false} />
               </LineChart>
             </ResponsiveContainer>
-          </div>
+          </ChartCard>
+        </div>
 
-          <div className={`rounded-xl shadow-lg p-4 sm:p-6 ${darkMode ? 'bg-zinc-900 border border-zinc-800' : 'bg-white'}`}>
-            <h2 className={`text-lg sm:text-xl font-semibold mb-4 sm:mb-6 ${darkMode ? 'text-white' : 'text-gray-800'}`}>How Others Compare to India</h2>
-            <div className="space-y-4">
-              {comparisonMetrics.map((item, idx) => {
-                const higherIsBetter = !['Unemployment Rate', 'Inflation Rate', 'Death Rate'].includes(item.metric);
-                
-                return (
-                  <div key={idx} className={`rounded-lg p-3 sm:p-4 ${darkMode ? 'bg-zinc-800 border border-zinc-700' : 'bg-gray-50'}`}>
-                    <div className={`text-base sm:text-lg font-semibold mb-3 ${darkMode ? 'text-white' : 'text-gray-900'}`}>{item.metric}</div>
-                    <div className={`flex items-center justify-between p-2 sm:p-3 rounded-lg mb-2 bg-gradient-to-r from-orange-500/10 to-transparent border-l-4 border-orange-500`}>
-                      <span className={`font-medium text-sm sm:text-base ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>India</span>
-                      <span className={`text-base sm:text-xl font-bold ${darkMode ? 'text-white' : 'text-gray-900'}`}>{item.India} {item.unit}</span>
+        {/* Comparison Metrics */}
+        <div className={`rounded-3xl p-8 mb-16 ${cardBg} border ${borderColor} backdrop-blur-sm`}>
+          <h2 className="text-2xl font-light mb-8 text-center">Metric Comparison</h2>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-x-12 gap-y-12">
+            {comparisonMetrics.map((item, idx) => {
+               const higherIsBetter = !['Unemployment Rate', 'Inflation Rate', 'Death Rate'].includes(item.metric);
+               return (
+                <div key={idx} className="space-y-4">
+                  <div className="flex justify-between items-end border-b border-neutral-800/20 pb-2">
+                    <span className={`text-sm uppercase tracking-wider font-semibold ${secondaryText}`}>{item.metric}</span>
+                  </div>
+                  
+                  {/* India (Highlight) */}
+                  <div className="flex items-center justify-between group">
+                    <div className="flex items-center gap-3">
+                       <div className="w-2 h-2 rounded-full" style={{ backgroundColor: COLORS.India }}></div>
+                       <span className="font-medium">India</span>
                     </div>
+                    <span className="text-xl font-bold font-mono tracking-tight">{item.India} <span className="text-xs font-sans font-normal opacity-50">{item.unit}</span></span>
+                  </div>
+
+                  {/* Others */}
+                  {(['USA', 'Russia', 'Europe'] as const).map((country) => {
+                    const countryValue = item[country] as number;
+                    const { isAhead } = getDifference(country, item.metric, item.India, countryValue, higherIsBetter);
                     
-                    {(['USA', 'Russia', 'Europe'] as const).map((country) => {
-                      const countryValue = item[country] as number;
-                      const { percentDiff, isAhead } = getDifference(country, item.metric, item.India, countryValue, higherIsBetter);
-                      
-                      return (
-                        <div key={country} className={`flex items-center justify-between p-2 sm:p-3 rounded-lg mb-2 ${darkMode ? 'bg-zinc-900 border' : 'bg-white border'} ${isAhead ? `border-l-4 border-[${COLORS[country]}]` : 'border-l-4 border-gray-300'}`}>
-                          <div className="flex items-center gap-2">
-                            <div className="w-3 h-3 rounded-full" style={{ backgroundColor: COLORS[country] }}></div>
-                            <span className={`font-medium text-sm sm:text-base ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>{country}</span>
-                          </div>
-                          <div className="text-right">
-                            <div className={`text-base sm:text-xl font-bold ${darkMode ? 'text-white' : 'text-gray-900'}`}>{countryValue} {item.unit}</div>
-                            <div className={`text-xs sm:text-sm ${isAhead ? 'text-green-500' : 'text-red-500'}`}>
-                              {isAhead ? '▲' : '▼'} {Math.abs(parseFloat(percentDiff))}% {isAhead ? 'ahead' : 'behind'} India
-                            </div>
-                          </div>
+                    return (
+                      <div key={country} className="flex items-center justify-between opacity-80 hover:opacity-100 transition-opacity">
+                        <div className="flex items-center gap-3">
+                          <div className="w-1.5 h-1.5 rounded-full opacity-60" style={{ backgroundColor: COLORS[country] }}></div>
+                          <span className={`${secondaryText}`}>{country}</span>
                         </div>
-                      );
-                    })}
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-
-          <div className={`rounded-xl shadow-lg p-4 sm:p-6 ${darkMode ? 'bg-zinc-900 border border-zinc-800' : 'bg-white'}`}>
-            <h2 className={`text-lg sm:text-xl font-semibold mb-4 sm:mb-6 ${darkMode ? 'text-white' : 'text-gray-800'}`}>Trade & Defense Comparison</h2>
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
-              {[
-                { name: 'India Exports', value: countryData.india.exports, color: 'bg-orange-500/10 border-orange-500' },
-                { name: 'USA Exports', value: countryData.usa.exports, color: 'bg-blue-500/10 border-blue-500' },
-                { name: 'Russia Exports', value: countryData.russia.exports, color: 'bg-red-500/10 border-red-500' },
-                { name: 'Europe Exports', value: countryData.europe.exports, color: 'bg-amber-500/10 border-amber-500' },
-              ].map((item, idx) => (
-                <div key={idx} className={`text-center p-3 sm:p-4 rounded-lg border-l-4 ${item.color}`}>
-                  <p className={`text-xs sm:text-sm ${darkMode ? 'text-gray-400' : 'text-gray-600'} mb-1`}>{item.name}</p>
-                  <p className={`text-lg sm:text-2xl font-bold ${darkMode ? 'text-white' : 'text-gray-900'}`}>${item.value}B</p>
-                </div>
-              ))}
-              {[
-                { name: 'India Defense', value: countryData.india.defenseBudget, color: 'bg-orange-500/10 border-orange-500' },
-                { name: 'USA Defense', value: countryData.usa.defenseBudget, color: 'bg-blue-500/10 border-blue-500' },
-                { name: 'Russia Defense', value: countryData.russia.defenseBudget, color: 'bg-red-500/10 border-red-500' },
-                { name: 'Europe Defense', value: countryData.europe.defenseBudget, color: 'bg-amber-500/10 border-amber-500' },
-              ].map((item, idx) => (
-                <div key={idx} className={`text-center p-3 sm:p-4 rounded-lg border-l-4 ${item.color}`}>
-                  <p className={`text-xs sm:text-sm ${darkMode ? 'text-gray-400' : 'text-gray-600'} mb-1`}>{item.name}</p>
-                  <p className={`text-lg sm:text-2xl font-bold ${darkMode ? 'text-white' : 'text-gray-900'}`}>${item.value}B</p>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          <div className={`rounded-xl shadow-lg p-4 sm:p-6 ${darkMode ? 'bg-zinc-900 border border-zinc-800' : 'bg-white'}`}>
-            <h2 className={`text-lg sm:text-xl font-semibold mb-4 ${darkMode ? 'text-white' : 'text-gray-800'}`}>Energy & Manufacturing</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div>
-                <p className={`text-sm ${darkMode ? 'text-gray-400' : 'text-gray-600'} mb-3`}>Renewable Energy Capacity (GW)</p>
-                <div className="space-y-3">
-                  {[
-                    { name: 'India', value: countryData.india.renewableEnergy, color: 'bg-orange-500', percent: ((countryData.india.renewableEnergy / countryData.usa.renewableEnergy) * 100).toFixed(0) },
-                    { name: 'USA', value: countryData.usa.renewableEnergy, color: 'bg-blue-500', percent: 100 },
-                    { name: 'Russia', value: countryData.russia.renewableEnergy, color: 'bg-red-500', percent: ((countryData.russia.renewableEnergy / countryData.usa.renewableEnergy) * 100).toFixed(0) },
-                    { name: 'Europe', value: countryData.europe.renewableEnergy, color: 'bg-amber-500', percent: ((countryData.europe.renewableEnergy / countryData.usa.renewableEnergy) * 100).toFixed(0) }
-                  ].map((item, idx) => (
-                    <div key={idx} className="flex items-center">
-                      <span className={`w-16 text-xs sm:text-sm font-medium ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>{item.name}</span>
-                      <div className={`flex-1 mx-2 sm:mx-4 ${darkMode ? 'bg-zinc-800' : 'bg-gray-200'} rounded-full h-3 sm:h-4`}>
-                        <div className={`${item.color} h-3 sm:h-4 rounded-full`} style={{ width: `${item.percent}%` }}></div>
+                        <div className="flex items-center gap-3">
+                           <span className={`text-xs ${isAhead ? 'text-emerald-500' : 'text-rose-500'}`}>
+                              {isAhead ? 'Better' : 'Worse'}
+                           </span>
+                           <span className="font-mono">{countryValue}</span>
+                        </div>
                       </div>
-                      <span className={`text-xs sm:text-sm font-bold ${darkMode ? 'text-white' : 'text-gray-900'}`}>{item.value} GW</span>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
-              </div>
-              <div>
-                <p className={`text-sm ${darkMode ? 'text-gray-400' : 'text-gray-600'} mb-3`}>Manufacturing Index Score</p>
-                <div className="space-y-3">
-                  {[
-                    { name: 'India', value: countryData.india.manufacturingIndex, color: 'bg-orange-500', percent: ((countryData.india.manufacturingIndex / countryData.europe.manufacturingIndex) * 100).toFixed(0) },
-                    { name: 'USA', value: countryData.usa.manufacturingIndex, color: 'bg-blue-500', percent: ((countryData.usa.manufacturingIndex / countryData.europe.manufacturingIndex) * 100).toFixed(0) },
-                    { name: 'Russia', value: countryData.russia.manufacturingIndex, color: 'bg-red-500', percent: ((countryData.russia.manufacturingIndex / countryData.europe.manufacturingIndex) * 100).toFixed(0) },
-                    { name: 'Europe', value: countryData.europe.manufacturingIndex, color: 'bg-amber-500', percent: 100 }
-                  ].map((item, idx) => (
-                    <div key={idx} className="flex items-center">
-                      <span className={`w-16 text-xs sm:text-sm font-medium ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>{item.name}</span>
-                      <div className={`flex-1 mx-2 sm:mx-4 ${darkMode ? 'bg-zinc-800' : 'bg-gray-200'} rounded-full h-3 sm:h-4`}>
-                        <div className={`${item.color} h-3 sm:h-4 rounded-full`} style={{ width: `${item.percent}%` }}></div>
-                      </div>
-                      <span className={`text-xs sm:text-sm font-bold ${darkMode ? 'text-white' : 'text-gray-900'}`}>{item.value}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div className={`rounded-xl shadow-lg p-4 sm:p-6 ${darkMode ? 'bg-zinc-900 border border-zinc-800' : 'bg-white'}`}>
-            <h2 className={`text-lg sm:text-xl font-semibold mb-4 sm:mb-6 ${darkMode ? 'text-white' : 'text-gray-800'}`}>Government Expenditure (% of GDP)</h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
-              {[
-                { country: 'India', healthcare: countryData.india.healthcareExpenditure, education: countryData.india.educationExpenditure, color: 'bg-orange-500/10 border-orange-500' },
-                { country: 'USA', healthcare: countryData.usa.healthcareExpenditure, education: countryData.usa.educationExpenditure, color: 'bg-blue-500/10 border-blue-500' },
-                { country: 'Russia', healthcare: countryData.russia.healthcareExpenditure, education: countryData.russia.educationExpenditure, color: 'bg-red-500/10 border-red-500' },
-                { country: 'Europe', healthcare: countryData.europe.healthcareExpenditure, education: countryData.europe.educationExpenditure, color: 'bg-amber-500/10 border-amber-500' }
-              ].map((item, idx) => (
-                <div key={idx} className={`p-3 sm:p-4 rounded-lg border-l-4 ${item.color}`}>
-                  <p className={`text-sm font-semibold mb-3 ${darkMode ? 'text-white' : 'text-gray-900'}`}>{item.country}</p>
-                  <div className="space-y-2">
-                    <div className="flex justify-between items-center">
-                      <span className={`text-xs ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Healthcare</span>
-                      <span className={`text-base sm:text-lg font-bold ${darkMode ? 'text-white' : 'text-gray-900'}`}>{item.healthcare}%</span>
-                    </div>
-                    <div className="flex justify-between items-center">
-                      <span className={`text-xs ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Education</span>
-                      <span className={`text-base sm:text-lg font-bold ${darkMode ? 'text-white' : 'text-gray-900'}`}>{item.education}%</span>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
+              );
+            })}
           </div>
         </div>
 
-        <footer className={`text-center mt-8 sm:mt-12 ${darkMode ? 'text-gray-500' : 'text-gray-500'} text-xs sm:text-sm`}>
-          <p>Data compiled from various international sources (World Bank, UN, IMF) • Updated 2024</p>
+        {/* Legend / Key */}
+        <div className="flex justify-center gap-8 mb-12 flex-wrap">
+           {Object.entries(COLORS).map(([name, color]) => (
+             <div key={name} className="flex items-center gap-2">
+               <span className="w-3 h-3 rounded-full" style={{ backgroundColor: color }}></span>
+               <span className={`text-sm ${secondaryText}`}>{name}</span>
+             </div>
+           ))}
+        </div>
+
+        <footer className={`text-center mt-20 ${secondaryText} text-xs font-light tracking-widest uppercase`}>
+          Data: World Bank, UN, IMF • 2024
         </footer>
       </div>
     </div>
   );
+}
+
+// Subcomponents for cleaner code
+function ChartCard({ children, title, darkMode, cardBg, borderColor, secondaryText }: any) {
+  return (
+    <div className={`rounded-3xl p-6 md:p-8 ${cardBg} border ${borderColor} backdrop-blur-sm hover:shadow-lg transition-shadow duration-300`}>
+      <h3 className={`text-lg font-medium mb-6 text-center ${secondaryText}`}>{title}</h3>
+      {children}
+    </div>
+  );
+}
+
+function CustomTooltip({ active, payload, label, darkMode }: any) {
+  if (active && payload && payload.length) {
+    return (
+      <div className={`p-4 rounded-xl shadow-xl text-xs ${darkMode ? 'bg-neutral-900 border border-neutral-800' : 'bg-white border border-neutral-100'}`}>
+        <p className={`font-semibold mb-2 ${darkMode ? 'text-neutral-300' : 'text-neutral-700'}`}>{label}</p>
+        {payload.map((entry: any) => (
+          <div key={entry.name} className="flex items-center gap-2 mb-1">
+            <div className="w-2 h-2 rounded-full" style={{ backgroundColor: entry.color }} />
+            <span className={darkMode ? 'text-neutral-400' : 'text-neutral-500'}>{entry.name}:</span>
+            <span className={`font-mono font-medium ${darkMode ? 'text-neutral-200' : 'text-neutral-800'}`}>
+              {entry.value.toLocaleString()}
+            </span>
+          </div>
+        ))}
+      </div>
+    );
+  }
+  return null;
 }

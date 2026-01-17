@@ -1,7 +1,7 @@
 export const countryData = {
   india: {
     name: 'India',
-    color: '#FF9933',
+    color: '#10b981', // Emerald 500
     population: {
       2018: 1352642280,
       2019: 1366417754,
