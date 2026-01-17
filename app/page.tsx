@@ -1,33 +1,27 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
-import { populationData, gdpData, gdpPerCapitaData, growthRateData, countryData, comparisonMetrics } from '../lib/data';
+import { useState } from 'react';
+import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import { populationData, gdpData, gdpPerCapitaData, growthRateData, comparisonMetrics } from '../lib/data';
 
 // Minimal, pleasing color palette
 const COLORS = {
-  India: '#10b981', // Emerald 500
-  USA: '#3b82f6',   // Blue 500
-  Russia: '#f43f5e', // Rose 500
-  Europe: '#f59e0b' // Amber 500
+  India: '#10b981',   // Emerald 500
+  USA: '#3b82f6',     // Blue 500
+  Europe: '#f59e0b',  // Amber 500
+  China: '#ef4444',   // Red 500
+  Russia: '#8b5cf6'   // Purple 500
 };
 
 export default function Home() {
   const [darkMode, setDarkMode] = useState(true);
-  const [mounted, setMounted] = useState(false);
 
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-
-  const getDifference = (country: 'USA' | 'Russia' | 'Europe', metric: string, indiaValue: number, countryValue: number, higherIsBetter: boolean = true) => {
+  const getDifference = (country: 'USA' | 'Russia' | 'Europe' | 'China', metric: string, indiaValue: number, countryValue: number, higherIsBetter: boolean = true) => {
     const diff = countryValue - indiaValue;
     const percentDiff = ((diff / indiaValue) * 100).toFixed(1);
     const isAhead = higherIsBetter ? countryValue > indiaValue : countryValue < indiaValue;
     return { diff, percentDiff, isAhead };
   };
-
-  if (!mounted) return null;
 
   const bgColor = darkMode ? 'bg-neutral-950' : 'bg-neutral-50';
   const textColor = darkMode ? 'text-neutral-200' : 'text-neutral-800';
@@ -37,7 +31,7 @@ export default function Home() {
 
   return (
     <div className={`min-h-screen ${bgColor} ${textColor} transition-colors duration-500 font-sans selection:bg-emerald-500/30`}>
-      <div className="max-w-6xl mx-auto px-6 py-12 md:py-20">
+      <div className="max-w-6xl mx-auto px-10 py-12 md:py-20">
         
         {/* Header Section */}
         <header className="flex flex-col items-center justify-center mb-16 space-y-6 text-center">
@@ -46,7 +40,7 @@ export default function Home() {
               Global Comparison
             </h1>
             <p className={`text-lg ${secondaryText} font-light tracking-wide`}>
-              India vs USA, Russia, Europe (2018-2024)
+              India vs USA, Europe, China, Russia (2018-2024)
             </p>
           </div>
           
@@ -65,62 +59,66 @@ export default function Home() {
 
         {/* Charts Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-16">
-          <ChartCard title="Population (Billions)" darkMode={darkMode} cardBg={cardBg} borderColor={borderColor} secondaryText={secondaryText}>
+          <ChartCard title="Population (Billions)" cardBg={cardBg} borderColor={borderColor} secondaryText={secondaryText}>
             <ResponsiveContainer width="100%" height={250}>
-              <LineChart data={populationData}>
-                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke={darkMode ? '#333' : '#eee'} />
-                <XAxis dataKey="year" tickLine={false} axisLine={false} tick={{ fill: darkMode ? '#737373' : '#a3a3a3', fontSize: 12 }} dy={10} />
-                <YAxis tickFormatter={(value) => `${(Number(value) / 1000000000).toFixed(1)}`} tickLine={false} axisLine={false} tick={{ fill: darkMode ? '#737373' : '#a3a3a3', fontSize: 12 }} />
-                <Tooltip content={<CustomTooltip darkMode={darkMode} />} />
+              <LineChart data={populationData} layout="horizontal">
+                <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke={darkMode ? '#333' : '#eee'} />
+                <XAxis type="number" tickFormatter={(value) => `${(Number(value) / 1000000000).toFixed(1)}`} tickLine={false} axisLine={false} tick={{ fill: darkMode ? '#737373' : '#a3a3a3', fontSize: 12 }} />
+                <YAxis type="category" dataKey="year" tickLine={false} axisLine={false} tick={{ fill: darkMode ? '#737373' : '#a3a3a3', fontSize: 12 }} width={40} />
+                <Tooltip content={<CustomTooltip darkMode={darkMode} chartTitle="Population (Billions)" />} />
                 <Line type="monotone" dataKey="India" stroke={COLORS.India} strokeWidth={2} dot={false} activeDot={{ r: 6 }} />
                 <Line type="monotone" dataKey="USA" stroke={COLORS.USA} strokeWidth={2} dot={false} />
-                <Line type="monotone" dataKey="Russia" stroke={COLORS.Russia} strokeWidth={2} dot={false} />
                 <Line type="monotone" dataKey="Europe" stroke={COLORS.Europe} strokeWidth={2} dot={false} />
+                <Line type="monotone" dataKey="China" stroke={COLORS.China} strokeWidth={2} dot={false} />
+                <Line type="monotone" dataKey="Russia" stroke={COLORS.Russia} strokeWidth={2} dot={false} />
               </LineChart>
             </ResponsiveContainer>
           </ChartCard>
 
-          <ChartCard title="GDP (Trillions USD)" darkMode={darkMode} cardBg={cardBg} borderColor={borderColor} secondaryText={secondaryText}>
+          <ChartCard title="GDP (Trillions USD)" cardBg={cardBg} borderColor={borderColor} secondaryText={secondaryText}>
             <ResponsiveContainer width="100%" height={250}>
-              <LineChart data={gdpData}>
-                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke={darkMode ? '#333' : '#eee'} />
-                <XAxis dataKey="year" tickLine={false} axisLine={false} tick={{ fill: darkMode ? '#737373' : '#a3a3a3', fontSize: 12 }} dy={10} />
-                <YAxis tickFormatter={(value) => `${Number(value)}`} tickLine={false} axisLine={false} tick={{ fill: darkMode ? '#737373' : '#a3a3a3', fontSize: 12 }} />
-                <Tooltip content={<CustomTooltip darkMode={darkMode} />} />
+              <LineChart data={gdpData} layout="horizontal">
+                <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke={darkMode ? '#333' : '#eee'} />
+                <XAxis type="number" tickFormatter={(value) => `${Number(value)}`} tickLine={false} axisLine={false} tick={{ fill: darkMode ? '#737373' : '#a3a3a3', fontSize: 12 }} />
+                <YAxis type="category" dataKey="year" tickLine={false} axisLine={false} tick={{ fill: darkMode ? '#737373' : '#a3a3a3', fontSize: 12 }} width={40} />
+                <Tooltip content={<CustomTooltip darkMode={darkMode} chartTitle="GDP (Trillions USD)" />} />
                 <Line type="monotone" dataKey="India" stroke={COLORS.India} strokeWidth={2} dot={false} activeDot={{ r: 6 }} />
                 <Line type="monotone" dataKey="USA" stroke={COLORS.USA} strokeWidth={2} dot={false} />
-                <Line type="monotone" dataKey="Russia" stroke={COLORS.Russia} strokeWidth={2} dot={false} />
                 <Line type="monotone" dataKey="Europe" stroke={COLORS.Europe} strokeWidth={2} dot={false} />
+                <Line type="monotone" dataKey="China" stroke={COLORS.China} strokeWidth={2} dot={false} />
+                <Line type="monotone" dataKey="Russia" stroke={COLORS.Russia} strokeWidth={2} dot={false} />
               </LineChart>
             </ResponsiveContainer>
           </ChartCard>
 
-          <ChartCard title="GDP Per Capita (USD)" darkMode={darkMode} cardBg={cardBg} borderColor={borderColor} secondaryText={secondaryText}>
+          <ChartCard title="GDP Per Capita (USD)" cardBg={cardBg} borderColor={borderColor} secondaryText={secondaryText}>
              <ResponsiveContainer width="100%" height={250}>
-              <BarChart data={gdpPerCapitaData}>
-                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke={darkMode ? '#333' : '#eee'} />
-                <XAxis dataKey="year" tickLine={false} axisLine={false} tick={{ fill: darkMode ? '#737373' : '#a3a3a3', fontSize: 12 }} dy={10} />
-                <YAxis tickFormatter={(value) => `${(Number(value) / 1000).toFixed(0)}k`} tickLine={false} axisLine={false} tick={{ fill: darkMode ? '#737373' : '#a3a3a3', fontSize: 12 }} />
-                <Tooltip content={<CustomTooltip darkMode={darkMode} />} />
+              <BarChart data={gdpPerCapitaData} layout="horizontal">
+                <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke={darkMode ? '#333' : '#eee'} />
+                <XAxis type="number" tickFormatter={(value) => `${(Number(value) / 1000).toFixed(0)}k`} tickLine={false} axisLine={false} tick={{ fill: darkMode ? '#737373' : '#a3a3a3', fontSize: 12 }} />
+                <YAxis type="category" dataKey="year" tickLine={false} axisLine={false} tick={{ fill: darkMode ? '#737373' : '#a3a3a3', fontSize: 12 }} width={40} />
+                <Tooltip content={<CustomTooltip darkMode={darkMode} chartTitle="GDP Per Capita (USD)" />} />
                 <Bar dataKey="India" fill={COLORS.India} radius={[4, 4, 0, 0]} />
                 <Bar dataKey="USA" fill={COLORS.USA} radius={[4, 4, 0, 0]} />
-                <Bar dataKey="Russia" fill={COLORS.Russia} radius={[4, 4, 0, 0]} />
                 <Bar dataKey="Europe" fill={COLORS.Europe} radius={[4, 4, 0, 0]} />
+                <Bar dataKey="China" fill={COLORS.China} radius={[4, 4, 0, 0]} />
+                <Bar dataKey="Russia" fill={COLORS.Russia} radius={[4, 4, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
           </ChartCard>
 
-          <ChartCard title="Growth Rate (%)" darkMode={darkMode} cardBg={cardBg} borderColor={borderColor} secondaryText={secondaryText}>
+          <ChartCard title="Growth Rate (%)" cardBg={cardBg} borderColor={borderColor} secondaryText={secondaryText}>
             <ResponsiveContainer width="100%" height={250}>
-              <LineChart data={growthRateData}>
-                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke={darkMode ? '#333' : '#eee'} />
-                <XAxis dataKey="year" tickLine={false} axisLine={false} tick={{ fill: darkMode ? '#737373' : '#a3a3a3', fontSize: 12 }} dy={10} />
-                <YAxis tickFormatter={(value) => `${Number(value)}`} tickLine={false} axisLine={false} tick={{ fill: darkMode ? '#737373' : '#a3a3a3', fontSize: 12 }} />
-                <Tooltip content={<CustomTooltip darkMode={darkMode} />} />
+              <LineChart data={growthRateData} layout="horizontal">
+                <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke={darkMode ? '#333' : '#eee'} />
+                <XAxis type="number" tickFormatter={(value) => `${Number(value)}`} tickLine={false} axisLine={false} tick={{ fill: darkMode ? '#737373' : '#a3a3a3', fontSize: 12 }} />
+                <YAxis type="category" dataKey="year" tickLine={false} axisLine={false} tick={{ fill: darkMode ? '#737373' : '#a3a3a3', fontSize: 12 }} width={40} />
+                <Tooltip content={<CustomTooltip darkMode={darkMode} chartTitle="Growth Rate (%)" />} />
                 <Line type="monotone" dataKey="India" stroke={COLORS.India} strokeWidth={2} dot={false} activeDot={{ r: 6 }} />
                 <Line type="monotone" dataKey="USA" stroke={COLORS.USA} strokeWidth={2} dot={false} />
-                <Line type="monotone" dataKey="Russia" stroke={COLORS.Russia} strokeWidth={2} dot={false} />
                 <Line type="monotone" dataKey="Europe" stroke={COLORS.Europe} strokeWidth={2} dot={false} />
+                <Line type="monotone" dataKey="China" stroke={COLORS.China} strokeWidth={2} dot={false} />
+                <Line type="monotone" dataKey="Russia" stroke={COLORS.Russia} strokeWidth={2} dot={false} />
               </LineChart>
             </ResponsiveContainer>
           </ChartCard>
@@ -148,7 +146,7 @@ export default function Home() {
                   </div>
 
                   {/* Others */}
-                  {(['USA', 'Russia', 'Europe'] as const).map((country) => {
+                  {(['USA', 'Europe', 'China', 'Russia'] as const).map((country) => {
                     const countryValue = item[country] as number;
                     const { isAhead } = getDifference(country, item.metric, item.India, countryValue, higherIsBetter);
                     
@@ -175,9 +173,9 @@ export default function Home() {
 
         {/* Legend / Key */}
         <div className="flex justify-center gap-8 mb-12 flex-wrap">
-           {Object.entries(COLORS).map(([name, color]) => (
+           {['India', 'USA', 'Europe', 'China', 'Russia'].map((name) => (
              <div key={name} className="flex items-center gap-2">
-               <span className="w-3 h-3 rounded-full" style={{ backgroundColor: color }}></span>
+               <span className="w-3 h-3 rounded-full" style={{ backgroundColor: COLORS[name as keyof typeof COLORS] }}></span>
                <span className={`text-sm ${secondaryText}`}>{name}</span>
              </div>
            ))}
@@ -192,7 +190,7 @@ export default function Home() {
 }
 
 // Subcomponents for cleaner code
-function ChartCard({ children, title, darkMode, cardBg, borderColor, secondaryText }: any) {
+function ChartCard({ children, title, cardBg, borderColor, secondaryText }: { children: React.ReactNode; title: string; cardBg: string; borderColor: string; secondaryText: string }) {
   return (
     <div className={`rounded-3xl p-6 md:p-8 ${cardBg} border ${borderColor} backdrop-blur-sm hover:shadow-lg transition-shadow duration-300`}>
       <h3 className={`text-lg font-medium mb-6 text-center ${secondaryText}`}>{title}</h3>
@@ -201,17 +199,30 @@ function ChartCard({ children, title, darkMode, cardBg, borderColor, secondaryTe
   );
 }
 
-function CustomTooltip({ active, payload, label, darkMode }: any) {
+function CustomTooltip({ active, payload, label, darkMode, chartTitle }: { active?: boolean; payload?: Array<{ name: string; value: number; color: string }>; label?: string; darkMode: boolean; chartTitle?: string }) {
   if (active && payload && payload.length) {
+    const formatValue = (value: number, title: string) => {
+      if (title.includes('Billions')) {
+        return `${(value / 1000000000).toFixed(2)} billion`;
+      }
+      if (title.includes('Trillions')) {
+        return `${(value / 1000000000000).toFixed(2)} trillion`;
+      }
+      if (title.includes('GDP Per Capita')) {
+        return `$${value.toLocaleString()}`;
+      }
+      return value.toLocaleString();
+    };
+    
     return (
       <div className={`p-4 rounded-xl shadow-xl text-xs ${darkMode ? 'bg-neutral-900 border border-neutral-800' : 'bg-white border border-neutral-100'}`}>
         <p className={`font-semibold mb-2 ${darkMode ? 'text-neutral-300' : 'text-neutral-700'}`}>{label}</p>
-        {payload.map((entry: any) => (
+        {payload.map((entry) => (
           <div key={entry.name} className="flex items-center gap-2 mb-1">
             <div className="w-2 h-2 rounded-full" style={{ backgroundColor: entry.color }} />
             <span className={darkMode ? 'text-neutral-400' : 'text-neutral-500'}>{entry.name}:</span>
             <span className={`font-mono font-medium ${darkMode ? 'text-neutral-200' : 'text-neutral-800'}`}>
-              {entry.value.toLocaleString()}
+              {formatValue(entry.value, chartTitle || '')}
             </span>
           </div>
         ))}

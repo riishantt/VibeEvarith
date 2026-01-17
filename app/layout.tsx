@@ -13,8 +13,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "India vs China - Data Comparison",
-  description: "Comprehensive data-driven comparison between India and China with charts and statistics",
+  title: "Global Comparison - India, USA, Europe, China, Russia",
+  description: "Comprehensive data-driven comparison between India, USA, Europe, China, and Russia with charts and statistics",
 };
 
 export default function RootLayout({
