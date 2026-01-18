@@ -47,5 +47,20 @@ body.dark-mode #theme-toggle:hover {
 }
 
 textarea {
-    margin-top: 20px;
+    width: 80%;
+    max-width: 500px;
+    margin: 20px auto 0;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #fff;
+    color: #000;
+    font-family: 'Questrial', sans-serif;
+    resize: vertical;
+}
+
+body.dark-mode textarea {
+    background-color: #333;
+    color: #fff;
+    border-color: #555;
 }
