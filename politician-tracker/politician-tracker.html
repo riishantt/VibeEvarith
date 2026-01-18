@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Politician Tracker - India</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+            color: #333;
+        }
+        header {
+            background-color: #2c3e50;
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+        h1 {
+            margin: 0;
+            font-size: 2.5em;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        .search-bar {
+            margin-bottom: 20px;
+        }
+        input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            font-size: 1em;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .politician-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        .politician-card {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 20px;
+            background-color: #fafafa;
+            transition: transform 0.2s;
+        }
+        .politician-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        .politician-card h3 {
+            margin-top: 0;
+            color: #2c3e50;
+        }
+        .score {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #e74c3c;
+        }
+        .details {
+            margin-top: 10px;
+        }
+        .details p {
+            margin: 5px 0;
+        }
+        .compare-btn {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        .compare-btn:hover {
+            background-color: #2980b9;
+        }
+        .comparison-table {
+            margin-top: 30px;
+            overflow-x: auto;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Politician Tracker - India</h1>
+        <p>Compare Indian politicians based on wealth, career, and performance metrics</p>
+    </header>
+    <div class="container">
+        <div class="search-bar">
+            <input type="text" id="searchInput" placeholder="Search politicians...">
+        </div>
+        <div class="politician-list" id="politicianList">
+            <!-- Politicians will be loaded here -->
+        </div>
+        <div class="comparison-table">
+            <h2>Comparison Table</h2>
+            <table id="comparisonTable">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Party</th>
+                        <th>Assets (₹ Cr)</th>
+                        <th>Criminal Cases</th>
+                        <th>Career Length (Years)</th>
+                        <th>Score</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Comparison data -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        const politicians = [
+            {
+                name: "Narendra Modi",
+                party: "BJP",
+                assets: 3.02,
+                criminalCases: 0,
+                careerLength: 30,
+                position: "Prime Minister"
+            },
+            {
+                name: "Rahul Gandhi",
+                party: "INC",
+                assets: 20.39,
+                criminalCases: 18,
+                careerLength: 20,
+                position: "MP"
+            },
+            {
+                name: "Amit Shah",
+                party: "BJP",
+                assets: 65.67,
+                criminalCases: 0,
+                careerLength: 25,
+                position: "Home Minister"
+            },
+            // Add more politicians here
+        ];
+
+        function calculateScore(politician) {
+            // Simple scoring: lower assets and criminal cases = higher score
+            // Career length adds points
+            const assetScore = Math.max(0, 100 - politician.assets / 10);
+            const criminalScore = Math.max(0, 100 - politician.criminalCases * 5);
+            const careerScore = politician.careerLength * 2;
+            return Math.round(assetScore + criminalScore + careerScore);
+        }
+
+        function renderPoliticians(politiciansToRender) {
+            const list = document.getElementById('politicianList');
+            list.innerHTML = '';
+            politiciansToRender.forEach(politician => {
+                const score = calculateScore(politician);
+                const card = document.createElement('div');
+                card.className = 'politician-card';
+                card.innerHTML = `
+                    <h3>${politician.name}</h3>
+                    <p><strong>Party:</strong> ${politician.party}</p>
+                    <p><strong>Position:</strong> ${politician.position}</p>
+                    <div class="score">Score: ${score}</div>
+                    <div class="details">
+                        <p><strong>Assets:</strong> ₹${politician.assets} Cr</p>
+                        <p><strong>Criminal Cases:</strong> ${politician.criminalCases}</p>
+                        <p><strong>Career Length:</strong> ${politician.careerLength} years</p>
+                    </div>
+                    <button class="compare-btn" onclick="addToComparison('${politician.name}')">Add to Compare</button>
+                `;
+                list.appendChild(card);
+            });
+        }
+
+        function renderComparisonTable() {
+            const tbody = document.querySelector('#comparisonTable tbody');
+            tbody.innerHTML = '';
+            politicians.slice(0, 5).forEach(politician => { // Show top 5 for comparison
+                const score = calculateScore(politician);
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${politician.name}</td>
+                    <td>${politician.party}</td>
+                    <td>₹${politician.assets} Cr</td>
+                    <td>${politician.criminalCases}</td>
+                    <td>${politician.careerLength}</td>
+                    <td>${score}</td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        function addToComparison(name) {
+            alert(`${name} added to comparison. (Feature to be expanded)`);
+        }
+
+        document.getElementById('searchInput').addEventListener('input', function() {
+            const query = this.value.toLowerCase();
+            const filtered = politicians.filter(p => p.name.toLowerCase().includes(query));
+            renderPoliticians(filtered);
+        });
+
+        // Initial render
+        renderPoliticians(politicians);
+        renderComparisonTable();
+    </script>
+</body>
+</html>
