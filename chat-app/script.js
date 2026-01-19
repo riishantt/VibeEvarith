@@ -1,11 +1,10 @@
-// Chat App using BroadcastChannel for cross-tab communication
+// Chat App using Socket.io for real-time communication
 
 class ChatApp {
     constructor() {
         this.currentChannel = null;
-        this.channels = JSON.parse(localStorage.getItem('channels')) || {};
         this.username = this.getUsername();
-        this.broadcastChannel = new BroadcastChannel('chat-app');
+        this.socket = io();
         this.typingTimeout = null;
         this.isTyping = false;
 
@@ -14,8 +13,7 @@ class ChatApp {
 
     init() {
         this.setupEventListeners();
-        this.renderChannels();
-        this.setupBroadcastChannel();
+        this.setupSocketListeners();
     }
 
     getUsername() {
@@ -36,48 +34,62 @@ class ChatApp {
         document.getElementById('message-input').addEventListener('input', () => this.handleTyping());
     }
 
-    setupBroadcastChannel() {
-        this.broadcastChannel.onmessage = (event) => {
-            const data = event.data;
-            switch (data.type) {
-                case 'message':
-                    if (data.channel === this.currentChannel) {
-                        this.displayMessage(data);
-                    }
-                    break;
-                case 'channel-created':
-                    this.channels[data.channel] = [];
-                    this.saveChannels();
-                    this.renderChannels();
-                    break;
-                case 'typing':
-                    if (data.channel === this.currentChannel && data.username !== this.username) {
-                        this.showTypingIndicator(data.username);
-                    }
-                    break;
-                case 'stop-typing':
-                    if (data.channel === this.currentChannel) {
-                        this.hideTypingIndicator();
-                    }
-                    break;
-            }
-        };
+    setupSocketListeners() {
+        this.socket.on('channels', (existingChannels) => {
+            existingChannels.forEach(channel => {
+                this.addChannelToUI(channel);
+            });
+        });
+
+        this.socket.on('channelCreated', (channelName) => {
+            this.addChannelToUI(channelName);
+        });
+
+        this.socket.on('channelHistory', (messages) => {
+            messages.forEach(msg => this.displayMessage(msg));
+        });
+
+        this.socket.on('message', (message) => {
+            this.displayMessage(message);
+        });
+
+        this.socket.on('typing', (data) => {
+            this.showTypingIndicator(data.username);
+        });
+
+        this.socket.on('stopTyping', () => {
+            this.hideTypingIndicator();
+        });
+
+        this.socket.on('userJoined', (data) => {
+            this.displayMessage({
+                username: 'System',
+                text: `${data.username} joined ${data.channel}`,
+                timestamp: new Date().toLocaleTimeString()
+            });
+        });
+
+        this.socket.on('userLeft', (data) => {
+            this.displayMessage({
+                username: 'System',
+                text: `${data.username} left the channel`,
+                timestamp: new Date().toLocaleTimeString()
+            });
+        });
     }
 
     createChannel() {
         const channelName = prompt('Enter channel name:');
-        if (channelName && !this.channels[channelName]) {
-            this.channels[channelName] = [];
-            this.saveChannels();
-            this.renderChannels();
-            this.broadcastChannel.postMessage({ type: 'channel-created', channel: channelName });
+        if (channelName) {
+            this.socket.emit('createChannel', channelName);
         }
     }
 
     joinChannel(channelName) {
         this.currentChannel = channelName;
-        this.renderChannels();
-        this.renderMessages();
+        this.updateChannelHighlight();
+        this.clearMessages();
+        this.socket.emit('join', { username: this.username, channel: channelName });
     }
 
     sendMessage() {
@@ -85,16 +97,12 @@ class ChatApp {
         const message = input.value.trim();
         if (message && this.currentChannel) {
             const messageData = {
-                type: 'message',
                 channel: this.currentChannel,
                 username: this.username,
                 text: message,
                 timestamp: new Date().toLocaleTimeString()
             };
-            this.channels[this.currentChannel].push(messageData);
-            this.saveChannels();
-            this.displayMessage(messageData);
-            this.broadcastChannel.postMessage(messageData);
+            this.socket.emit('message', messageData);
             input.value = '';
             this.stopTyping();
         }
@@ -103,8 +111,7 @@ class ChatApp {
     handleTyping() {
         if (!this.isTyping && this.currentChannel) {
             this.isTyping = true;
-            this.broadcastChannel.postMessage({
-                type: 'typing',
+            this.socket.emit('typing', {
                 channel: this.currentChannel,
                 username: this.username
             });
@@ -116,10 +123,8 @@ class ChatApp {
     stopTyping() {
         if (this.isTyping && this.currentChannel) {
             this.isTyping = false;
-            this.broadcastChannel.postMessage({
-                type: 'stop-typing',
-                channel: this.currentChannel,
-                username: this.username
+            this.socket.emit('stopTyping', {
+                channel: this.currentChannel
             });
         }
     }
@@ -145,28 +150,28 @@ class ChatApp {
         messagesDiv.scrollTop = messagesDiv.scrollHeight;
     }
 
-    renderChannels() {
+    addChannelToUI(channelName) {
         const channelsList = document.getElementById('channels-list');
-        channelsList.innerHTML = '';
-        Object.keys(this.channels).forEach(channel => {
-            const channelDiv = document.createElement('div');
-            channelDiv.className = `channel ${channel === this.currentChannel ? 'active' : ''}`;
-            channelDiv.textContent = `#${channel}`;
-            channelDiv.addEventListener('click', () => this.joinChannel(channel));
-            channelsList.appendChild(channelDiv);
+        // Check if channel already exists in UI
+        if (document.querySelector(`[data-channel="${channelName}"]`)) return;
+
+        const channelDiv = document.createElement('div');
+        channelDiv.className = 'channel';
+        channelDiv.textContent = `#${channelName}`;
+        channelDiv.dataset.channel = channelName;
+        channelDiv.addEventListener('click', () => this.joinChannel(channelName));
+        channelsList.appendChild(channelDiv);
+        this.updateChannelHighlight();
+    }
+
+    updateChannelHighlight() {
+        document.querySelectorAll('.channel').forEach(el => {
+            el.classList.toggle('active', el.dataset.channel === this.currentChannel);
         });
     }
 
-    renderMessages() {
-        const messagesDiv = document.getElementById('chat-messages');
-        messagesDiv.innerHTML = '';
-        if (this.currentChannel && this.channels[this.currentChannel]) {
-            this.channels[this.currentChannel].forEach(msg => this.displayMessage(msg));
-        }
-    }
-
-    saveChannels() {
-        localStorage.setItem('channels', JSON.stringify(this.channels));
+    clearMessages() {
+        document.getElementById('chat-messages').innerHTML = '';
     }
 }
 
