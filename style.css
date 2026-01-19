@@ -21,7 +21,7 @@ body.dark-mode {
     color: #fff;
 }
 
-#theme-toggle, #tracker-btn {
+#theme-toggle, #tracker-btn, #map-btn {
     margin-bottom: 20px;
     padding: 10px 20px;
     border: none;
@@ -33,16 +33,16 @@ body.dark-mode {
     transition: background-color 0.3s ease;
 }
 
-#theme-toggle:hover, #tracker-btn:hover {
+#theme-toggle:hover, #tracker-btn:hover, #map-btn:hover {
     background-color: #0056b3;
 }
 
-body.dark-mode #theme-toggle, body.dark-mode #tracker-btn {
+body.dark-mode #theme-toggle, body.dark-mode #tracker-btn, body.dark-mode #map-btn {
     background-color: #555;
     color: white;
 }
 
-body.dark-mode #theme-toggle:hover, body.dark-mode #tracker-btn:hover {
+body.dark-mode #theme-toggle:hover, body.dark-mode #tracker-btn:hover, body.dark-mode #map-btn:hover {
     background-color: #333;
 }
 

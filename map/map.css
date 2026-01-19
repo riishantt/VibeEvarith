@@ -1,0 +1,34 @@
+body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Questrial', sans-serif;
+}
+
+.nav-container {
+    padding: 1rem;
+    background: #f8f9fa;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.back-link {
+    text-decoration: none;
+    color: #333;
+    font-weight: bold;
+}
+
+.back-link:hover {
+    color: #007bff;
+}
+
+h1 {
+    margin: 0;
+    font-size: 1.5rem;
+}
+
+#map {
+    height: calc(100vh - 70px); /* Adjust based on header height */
+    width: 100%;
+}
